@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'io.quarkus' version '3.15.1'
+}
+
+group = 'org.acme'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    quarkusPlatformGroupId = 'io.quarkus.platform'
+    quarkusPlatformArtifactId = 'quarkus-bom'
+    quarkusPlatformVersion = '3.15.1'
+    compilerPluginVersion = '3.11.0'
+    surefirePluginVersion = '3.1.2'
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-rest'
+    implementation 'io.quarkus:quarkus-oidc'
+    implementation 'io.quarkus:quarkus-smallrye-jwt'
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty 'java.util.logging.manager', 'org.jboss.logmanager.LogManager'
+    systemProperty 'maven.home', System.getenv('MAVEN_HOME')
+}
+
+
+configurations {
+    nativeTestImplementation.extendsFrom testImplementation
+}
+
+task nativeTest(type: Test) {
+    useJUnitPlatform()
+    systemProperty 'native.image.path', "${buildDir}/native-image/${project.name}-runner"
+    systemProperty 'java.util.logging.manager', 'org.jboss.logmanager.LogManager'
+    systemProperty 'maven.home', System.getenv('MAVEN_HOME')
+    classpath = sourceSets.test.runtimeClasspath
+    testClassesDirs = sourceSets.test.output.classesDirs
+}
+
+gradle.projectsEvaluated {
+    tasks.withType(Test) {
+        if (project.hasProperty('native')) {
+            dependsOn nativeTest
+        }
+    }
+}
