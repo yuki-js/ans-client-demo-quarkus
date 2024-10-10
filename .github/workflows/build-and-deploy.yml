@@ -18,13 +18,15 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '21'
+        distribution: 'temurin'
 
     - name: Set up GraalVM
       uses: graalvm/setup-graalvm@v1
       with:
         version: '21.3.0'
         java-version: '21'
-
+        distribution: 'graalvm'
+    
     - name: Build native application
       run: ./gradlew build -Dquarkus.package.type=native
 
