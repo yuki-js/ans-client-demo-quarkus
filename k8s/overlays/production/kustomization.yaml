@@ -1,0 +1,7 @@
+
+bases:
+  - ../../base
+
+images:
+  - name: ghcr.io/yuki-js/ans-client-demo
+    newTag: 1.0.0

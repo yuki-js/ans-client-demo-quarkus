@@ -1,0 +1,10 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ans-client-demo-config
+data:
+  application.properties: |
+    quarkus.http.port=8080
+    quarkus.http.host=0.0.0.0
+    # Add other configuration properties here

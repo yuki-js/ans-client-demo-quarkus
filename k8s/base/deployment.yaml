@@ -1,0 +1,23 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ans-client-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ans-client-demo
+  template:
+    metadata:
+      labels:
+        app: ans-client-demo
+    spec:
+      containers:
+      - name: ans-client-demo
+        image: ghcr.io/yuki-js/ans-client-demo:1.0.0
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: ans-client-demo-config
